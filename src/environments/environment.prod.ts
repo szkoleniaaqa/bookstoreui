@@ -4,7 +4,7 @@
 
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://bookstoreapi-1-production.up.railway.app/'
+  apiBaseUrl: 'https://bookstoreapi-1-production.up.railway.app'
 };
 
 /*
