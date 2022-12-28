@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {BookService} from "./book.service";
 import {Book} from "./book";
 import {HttpErrorResponse} from "@angular/common/http";
@@ -25,8 +25,18 @@ export class AppComponent implements OnInit {
   public currentAuthorFirstName: string | undefined;
   public currentAuthorLastName: string | undefined;
   public currentAuthorId: any;
+
+  public currentBook: Book | undefined;
+  public currentBookTitle: string | undefined;
+  public currentBookPrice: number | undefined;
+  public currentBookYear: number | undefined;
+  public currentBookAvailable: number | undefined;
+  public currentBookAuthors: Author[] | undefined = [];
+  public currentBookId: any;
+
   public cartItems: CartItem[] = [];
-  confirmationErrorMessage: any;
+  confirmationMessage: any;
+  errorMessage: any;
 
   constructor(private bookService: BookService,
               private orderService: OrderService,
@@ -35,6 +45,8 @@ export class AppComponent implements OnInit {
 
   // OPEN MODAL
   public onOpenModal(mode: string): void {
+    this.confirmationMessage = null;
+    this.errorMessage = null;
     const container = document.getElementById('main-container');
     const button = document.createElement('button');
     button.type = 'button';
@@ -68,7 +80,9 @@ export class AppComponent implements OnInit {
     if (mode === 'createBookModal') {
       button.setAttribute('data-target', '#createBookModal');
       this.getAuthors();
-      this.getAuthors();
+    }
+    if (mode === 'editBookModal') {
+      button.setAttribute('data-target', '#editBookModal');
     }
     // @ts-ignore
     container.appendChild(button);
@@ -106,11 +120,44 @@ export class AppComponent implements OnInit {
     this.bookService.deleteBook(id)
       .subscribe(
         (response: any) => {
-          console.log("Delete book submitted")
-          this.confirmationErrorMessage = "Book deleted!"
+          this.confirmationMessage = "Książka usunięta pomyślnie!"
         },
         (error: HttpErrorResponse) => {
-          this.confirmationErrorMessage = error.message
+          this.errorMessage = "Wystąpił problem podczas usuwania książki!"
+        }
+      )
+  }
+
+  public onEditBookClicked(id: number) {
+    this.currentBook = this.books.find((b) => {
+      return b.id === id
+    });
+
+    this.currentBookTitle = this.currentBook?.title
+    this.currentBookPrice = this.currentBook?.price
+    this.currentBookAvailable = this.currentBook?.available
+    this.currentBookYear = this.currentBook?.year
+    this.currentBookAuthors = this.currentBook?.authors
+    this.currentBookId = id;
+    this.onOpenModal("editBookModal");
+  }
+
+  public onEditBookSubmit(id: number, editBookForm: NgForm): void {
+    // @ts-ignore
+    document.getElementById('cancel-order-button').click();
+    // @ts-ignore
+    document.getElementById('close-cart-button').click();
+    console.log("Received form: {}")
+
+    this.bookService.editBook(id, editBookForm.value)
+      .subscribe(
+        (response: any) => {
+          console.log(editBookForm.value)
+          console.log("Edit author submitted")
+          this.confirmationMessage = "Dane książki zaktualizowane pomyślnie!"
+        },
+        (error: HttpErrorResponse) => {
+          this.errorMessage = "Wystąpił problem podczas aktualizacji książki!"
         }
       )
   }
@@ -127,10 +174,10 @@ export class AppComponent implements OnInit {
         (response: any) => {
           console.log("Book submitted")
           createBookForm.reset();
-          this.confirmationErrorMessage = "Book created!"
+          this.confirmationMessage = "Książka dodana pomyślnie!"
         },
         (error: HttpErrorResponse) => {
-          this.confirmationErrorMessage = error.message
+          this.errorMessage = "Wystąpił problem podczas dodawania książki!"
         }
       )
   }
@@ -171,9 +218,11 @@ export class AppComponent implements OnInit {
         (response: any) => {
           console.log("Order submitted")
           this.clearCart();
+          this.confirmationMessage = "Zamówienie złożone pomyślnie!"
         },
         (error: HttpErrorResponse) => {
           console.error(error.message);
+          this.errorMessage = "Wystąpił problem podczas skłądania zamówienia!"
         }
       )
   }
@@ -216,13 +265,11 @@ export class AppComponent implements OnInit {
     this.authorService.createAuthor(createAuthorForm.value)
       .subscribe(
         (response: any) => {
-          console.log("Tworzenie autora")
-          console.log("Author submitted")
           createAuthorForm.reset();
-          this.confirmationErrorMessage = "Author created!"
+          this.confirmationMessage = "Autor utworzony pomyślnie!"
         },
         (error: HttpErrorResponse) => {
-          this.confirmationErrorMessage = error.message
+          this.errorMessage = "Wystąpił problem podczas tworzenia autora!"
         }
       )
   }
@@ -240,10 +287,10 @@ export class AppComponent implements OnInit {
           console.log(editAuthorForm.value)
           console.log("Edit author submitted")
           editAuthorForm.reset();
-          this.confirmationErrorMessage = "Changes saved!"
+          this.confirmationMessage = "Dane autora zaktualizowane pomyślnie!"
         },
         (error: HttpErrorResponse) => {
-          this.confirmationErrorMessage = error.message
+          this.errorMessage = "Wystąpił problem podczas aktualizacji danych autora!"
         }
       )
   }
@@ -252,11 +299,10 @@ export class AppComponent implements OnInit {
     this.authorService.deleteAuthor(id)
       .subscribe(
         (response: any) => {
-          console.log("Delete author submitted")
-          this.confirmationErrorMessage = "Changes saved!"
+          this.confirmationMessage = "Autor usunięty pomyślnie!"
         },
         (error: HttpErrorResponse) => {
-          this.confirmationErrorMessage = error.message
+          this.errorMessage = "Wystąpił problem podczas usuwania autora!"
         }
       )
   }

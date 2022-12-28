@@ -18,13 +18,30 @@
   </div>
 </nav>
 
+<!-- SUCCESS ALERT -->
+<div class="container">
+  <div *ngIf="confirmationMessage" id="success_alert" class="alert alert-success alert-dismissible fade show">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{confirmationMessage}}
+  </div>
+</div>
+
+<!-- ERROR ALERT -->
+<div class="container">
+  <div *ngIf="errorMessage" id="error_alert" class="alert alert-danger alert-dismissible fade show">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    {{errorMessage}}
+  </div>
+</div>
+
 <div class="container" id="main-container">
   <div class="row">
     <div *ngFor="let book of books" class="col-md-6 col-xl-6">
       <div class="card m-b-30">
         <div class="card-body row">
           <div class="col-3">
-            <a href=""><img src="{{book.coverUrl}}" alt="" class="shadow img-fluid rounded w-60"></a>
+            <a *ngIf="book.coverUrl" href=""><img src="{{book.coverUrl}}" alt="" class="shadow img-fluid rounded w-60"></a>
+            <a *ngIf="!book.coverUrl" href=""><img src="https://akademiaqa.pl/wp-content/uploads/2022/12/Screenshot-2022-12-28-at-14.09.14.png" alt="" class="shadow img-fluid rounded w-60"></a>
           </div>
           <div class="col-9 card-title align-self-center mb-0">
             <h5>{{book.title}}</h5>
@@ -81,7 +98,7 @@
         </button>
         <button id="close-cart-button" type="button" class="btn btn-secondary" data-dismiss="modal">Kontynuuj zakupy
         </button>
-        <button type="button" (click)="onOpenModal('order')" class="btn btn-primary">Załóż zamówienie</button>
+        <button type="button" (click)="onOpenModal('order')" class="btn btn-primary">Zamów</button>
       </div>
     </div>
   </div>
@@ -124,9 +141,9 @@
             <input ngModel name="zipCode" type="text" class="form-control" id="zipCodeField" required>
           </div>
           <div class="modal-footer">
-            <button id="cancel-order-button" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel
+            <button id="cancel-order-button" type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij
             </button>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Wyślij zamówienie</button>
           </div>
         </form>
       </div>
@@ -145,10 +162,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form #createAuthorForm="ngForm" (ngSubmit)="onCreateAuthorSubmit(createAuthorForm)">
-          <td *ngIf="confirmationErrorMessage">
-            <label>{{confirmationErrorMessage}}</label>
-          </td>
+        <form #createAuthorForm="ngForm">
           <div class="form-group">
             <div class="form-group">
               <label for="firstNameField">Imię</label>
@@ -161,7 +175,9 @@
             <button id="cancel-create-author-button" type="button" class="btn btn-secondary" data-dismiss="modal">
               Zamknij
             </button>
-            <button type="submit" class="btn btn-primary">Wyślij</button>
+            <button type="button" (click)="onCreateAuthorSubmit(createAuthorForm)" class="btn btn-primary"
+                    data-dismiss="modal">Wyślij
+            </button>
           </div>
         </form>
       </div>
@@ -180,10 +196,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form #editAuthorForm="ngForm" (ngSubmit)="onEditAuthorSubmit(currentAuthorId, editAuthorForm)">
-          <td *ngIf="confirmationErrorMessage">
-            <label>{{confirmationErrorMessage}}</label>
-          </td>
+        <form #editAuthorForm="ngForm">
           <div class="form-group">
             <div class="form-group">
               <label for="firstNameField">Imię</label>
@@ -198,7 +211,9 @@
             <button id="cancel-edit-author-button" type="button" class="btn btn-secondary" data-dismiss="modal">
               Zamknij
             </button>
-            <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+            <button type="button" (click)="onEditAuthorSubmit(currentAuthorId, editAuthorForm)" class="btn btn-primary"
+                    data-dismiss="modal">Zapisz zmiany
+            </button>
           </div>
         </form>
       </div>
@@ -267,10 +282,8 @@
           <div class="card m-b-30">
             <div class="card-body row">
               <div class="col-3">
-                <p>
-                  <a href=""><img src="{{book.coverUrl}}" alt=""
-                                  class="shadow img-fluid rounded w-60"></a>
-                </p>
+                <p *ngIf="book.coverUrl"><a href=""><img src="{{book.coverUrl}}" alt="" class="shadow img-fluid rounded w-60"></a></p>
+                <p *ngIf="!book.coverUrl"><a href=""><img src="https://akademiaqa.pl/wp-content/uploads/2022/12/Screenshot-2022-12-28-at-14.09.14.png" alt="" class="shadow img-fluid rounded w-60"></a></p>
               </div>
               <div class="col-9 card-title align-self-center mb-0">
                 <p>
@@ -283,9 +296,9 @@
                   Cena: {{book.price}} PLN
                 </p>
                 <p>
-                  Dostępnych egzemplarzy: {{book.available}} PLN
+                  Dostępnych egzemplarzy: {{book.available}}
                 </p>
-                <button type="button" (click)="onEditAuthorClicked(book.id)" class="btn btn-primary"
+                <button type="button" (click)="onEditBookClicked(book.id)" class="btn btn-primary"
                         data-dismiss="modal"> Edytuj
                 </button>
                 &nbsp;&nbsp;&nbsp;
@@ -320,21 +333,14 @@
         </button>
       </div>
       <div class="modal-body">
-        <form #createBookForm="ngForm" (ngSubmit)="onCreateBookSubmit(createBookForm)">
-          <td *ngIf="confirmationErrorMessage">
-            <label>{{confirmationErrorMessage}}</label>
-          </td>
+        <form #createBookForm="ngForm">
           <div class="form-group">
             <label for="titleField">Tytuł</label>
             <input ngModel name="title" type="text" class="form-control" id="titleField" required>
           </div>
           <div class="form-group">
-<!--            <label for="authorsField">Autorzy:</label>-->
-<!--            <input ngModel="list" type="text" name="authors" class="form-control" id="authorsField" required>-->
-
-            <label for="authorsField">Autorzy:</label>
-            <select id="authorsField" name="authors" ng-model="data.model" multiple>
-              <option *ngFor="let author of authors" [ngValue]="author.fullName">{{author.fullName}}</option>
+            <select ngModel name="authors" id="authorsField" class="form-select" multiple aria-label="multiple select example">
+              <option *ngFor="let author of authors" value="{{author.id}}">{{author.firstName}} {{author.lastName}}</option>
             </select>
           </div>
           <div class="form-group">
@@ -353,7 +359,54 @@
             <button id="cancel-create-book-button" type="button" class="btn btn-secondary" data-dismiss="modal">
               Zamknij
             </button>
-            <button type="submit" class="btn btn-primary">Wyślij</button>
+            <button type="button" (click)="onCreateBookSubmit(createBookForm)" class="btn btn-primary" data-dismiss="modal">Dodaj książkę
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT BOOK MODAL -->
+<div class="modal fade" id="editBookModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edytuj książkę</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #editBookForm="ngForm">
+          <div class="form-group">
+            <label for="editTitleField">Tytuł</label>
+            <input ngModel name="title" type="text" class="form-control" id="editTitleField"  [(ngModel)]="currentBookTitle" required>
+          </div>
+          <div class="form-group">
+            <select ngModel name="authors" id="editAuthorsField" class="form-select" multiple aria-label="multiple select example">
+              <option *ngFor="let author of authors" value="{{author.id}}">{{author.firstName}} {{author.lastName}}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editYearField">Rok wydania:</label>
+            <input ngModel name="year" type="text" class="form-control" id="editYearField" [(ngModel)]="currentBookYear" required>
+          </div>
+          <div class="form-group">
+            <label for="editPriceField">Cena:</label>
+            <input ngModel name="price" type="text" class="form-control" id="editPriceField" [(ngModel)]="currentBookPrice"required>
+          </div>
+          <div class="form-group">
+            <label for="editAvailableField">Ilość egzemploarzy:</label>
+            <input ngModel name="available" type="text" class="form-control" id="editAvailableField" [(ngModel)]="currentBookAvailable"required>
+          </div>
+          <div class="modal-footer">
+            <button id="cancel-edit-book-button" type="button" class="btn btn-secondary" data-dismiss="modal">
+              Zamknij
+            </button>
+            <button type="button" (click)="onEditBookSubmit(currentBookId, editBookForm)" class="btn btn-primary" data-dismiss="modal">Zapisz zmiany
+            </button>
           </div>
         </form>
       </div>
