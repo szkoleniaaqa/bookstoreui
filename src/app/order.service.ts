@@ -13,7 +13,7 @@ import {OrderDetails} from "./orderDetails";
 })
 export class OrderService {
 
-  private apiServerUrl = environment.apiBaseUrl;
+  private apiServerUrl = environment.API_URL;
 
   constructor(private http: HttpClient) {
   }

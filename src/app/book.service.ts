@@ -10,7 +10,7 @@ import {Author} from "./author";
 })
 export class BookService {
 
-  private apiServerUrl = environment.apiBaseUrl;
+  private apiServerUrl = environment.API_URL;
 
   constructor(private http: HttpClient) {
   }

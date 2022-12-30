@@ -4,8 +4,7 @@
 
 export const environment = {
   production: false,
-  // apiBaseUrl: 'https://bookstoreapi-1-production.up.railway.app'
-  apiBaseUrl: 'http://localhost:8080'
+  API_URL: process.env["API_URL"]
 };
 
 /*
