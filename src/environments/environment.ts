@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_URL: "https://aqa-bookstoreapi-0.up.railway.app"
+  API_URL: "https://aqa-bookstoreapi-5.up.railway.app"
 };
 
 /*
