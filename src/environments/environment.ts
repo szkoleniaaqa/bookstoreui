@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_URL: process.env['NG_APP_API_URL']
+  API_URL: "https://bookstoreapi-1.up.railway.app"
 };
 
 /*
